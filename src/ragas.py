@@ -32,13 +32,37 @@ def avaliar():
         "quais são os locais que o ônibus AV. IPIRANGA  / BUTANTÃ passa?",
         "que horarios o ônibus AV. PAULISTA / ACLIMAÇÃO passa?",
         "há algum incoveniente presente na linha AV. IPIRANGA  / BUTANTÃ?",
-        "quais os dados de Vila Mariana / LAPA?"
+        "quais os dados de Vila Mariana / LAPA?",
+        # armadilhas,
+        "quais os principais pontos da trajetoria do ônibus Vila Mariana / LAPA e quais delas estão com algum imprevisto?",
+        "qual o horario geral da linha AV. IPIRANGA  / BUTANTÃ e quais os horarios individuais de cada onibus?",
+        "entre os atrasos previstos para a linha Vila Mariana / LAPA, quais são os locais que atencedem o local do imprevisto?",
+        "quando a linha AV. IPIRANGA  / BUTANTÃ entra em atividade e quais são os quatro primeiros horarios dela?",
+    
     ]
     contextos = [
         ("itinerario", "9089-10 | AV. IPIRANGA  / BUTANTÃ"),
         ("horario", "5084-10 | AV. PAULISTA / ACLIMAÇÃO"),
         ("atrasos", "9089-10 | AV. IPIRANGA  / BUTANTÃ"),
-        ("itinerario", "8742-10 | Vila Mariana / LAPA")
+        ("itinerario", "8742-10 | Vila Mariana / LAPA"),
+        # armadilhas
+        ("itinerario", "8742-10 | Vila Mariana / LAPA"),
+        ("horario", "9089-10 | AV. IPIRANGA  / BUTANTÃ"),
+        ("itinerario", "8742-10 | Vila Mariana / LAPA"),
+        ("horario", "9089-10 | AV. IPIRANGA  / BUTANTÃ"),
+    ]
+    
+    esperados = [
+        """
+        """,
+        """
+        """,
+        """
+        """,
+        """
+        """,
+        """
+        """,
     ]
     try:
         client = genai.Client(api_key=os.environ.get("GEMINI"))
@@ -52,7 +76,6 @@ def avaliar():
         def responder(j: str, i: int):
             print(f"executando teste - {i + 1}")
             resposta = gerar_resposta_agent_direta(j)
-            print(resposta)
             return resposta
 
         respostas = [responder(i, j) for j, i in enumerate(perguntas)]

@@ -121,7 +121,7 @@ def rag_indexar():
     db = obter_db()
     retriever = db.as_retriever(
         search_type="similarity",
-        search_kwargs={"k": 3},  
+        search_kwargs={"k": 2},  
     )
     
     # for i in db.similarity_search_with_relevance_scores("4. Robert Malthus", 3):

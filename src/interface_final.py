@@ -72,7 +72,7 @@ def criar_gradio():
                     gr.ChatInterface(
                         fn=responder,
                         title="🤖 Agente de mobilidade pública — GS - Citizentech",
-                        description="Agente com RAG. Powered by Ollama.",
+                        description="Agente com RAG. Powered by Gemini.",
                         # inputs=gr.Textbox(label="Pergunta", placeholder="Digite aqui..."),
                         # outputs=gr.Textbox(label="Resposta"),
                         # title="Assistente escrita",

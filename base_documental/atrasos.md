@@ -19,6 +19,7 @@ sem imprevistos documentados
 | tipo     | local                   | duração | tempo de atraso | detalhes  |
 | -------- | ----------------------- | ------- | --------------- | --------- |
 | ausência | AV. LINS DE VASCONCELOS | 30m     | 30m             | motorista |
+| trânsito | R. COLÔMBIA             | 30m     | 10m             |           |
 
 ## 9089-10 | AV. IPIRANGA  / BUTANTÃ
 

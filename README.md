@@ -20,6 +20,11 @@ devido a problemas com o serviço do ollama cloud, tivemos que trocar a llm do a
 
 devido a esses mesmos motivos, o projeto foi desenvolvido localmente, sem colab ou jupyter notebook, siga as instruções localizadas no fim desse arquivo readme para descobrir como rodar.
 
+# Armadilhas
+
+dentro dos documentos se encontram duas armadilhas, a primeira é uma contradição de horario para a linha 9089-10 | AV. IPIRANGA  / BUTANTÃ entre o itinerario.md, que contém o horario geral de funcionamento, e o documento horario.md, que contém cada horario em que o veiculo passa, o itinerario fala que o horario geral é das 05:00 até 00:00, mas nos horarios individuais, os ônibus começam as 7:35 e termima as 18:51.
+já a segunda armadilha, no arquivo atrasos.md, para a linha 8742-10 | Vila Mariana / LAPA, consta um imprevisto em uma rua que não existe na linha, especificamente na R. COLÔMBIA, há qual não é descrita na seção do documento itinerario.md d
+
 # documentação
 
 nos tópicos a seguir era tratado sobre a estrutura do programa e decisões de desenvolvimento, que podem ser lidas tanto aqui quanto no arquivo documentacao.pdf
