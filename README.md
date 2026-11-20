@@ -154,15 +154,16 @@ e a terceira é a leitor de documentos, que permite o usuário ver os documentos
 
 # Principais arquivos
 
-| Arquivo           | Responsabilidade                                     |
-| ----------------- | ---------------------------------------------------- |
-| `main.py`         | Inicialização do sistema                             |
-| `src/agent`       | pasta com todos os arquivos necessários para o agent |
-| `src/interface`   | configuração da interface gradio                     |
-| `src/agent/rag`   | configuração do rags                                 |
-| `src/agent/tools` | configuração das tools                               |
-| `assets/prompt/`  | Prompts utilizados pelo chatbot                      |
-| `src/db.py`       | Código para o banco de dados                         |
+| Arquivo            | Responsabilidade                                     |
+| ------------------ | ---------------------------------------------------- |
+| `main.py`          | Inicialização do sistema                             |
+| `src/agent`        | pasta com todos os arquivos necessários para o agent |
+| `src/interface`    | configuração da interface gradio                     |
+| `src/agent/rag.py` | configuração do rags                                 |
+| `src/agent/tools`  | configuração das tools                               |
+| `assets/prompt/`   | Prompts utilizados pelo chatbot                      |
+| `src/db.py`        | Código para o banco de dados                         |
+| `src/ragas.py`     | testes e ragas                                       |
 
 # Como executar
 
@@ -230,6 +231,12 @@ gradio main.py
 com o projeto rodado, abra a url que aparecerá no terminal
 
 ## 6. Executando ragas
+
+caso queria executar o ragas do projeto, rode o arquivo teste.py
+
+```
+python teste.py
+```
 
 # Limitações atuais
 

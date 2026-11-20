@@ -4,3 +4,7 @@ João Lucas Silva Lopes (RM573875)
 Enzo Ribeiro (RM569429)
 
 links:
+repositorio: 
+https://github.com/Joao-Lucas-Si/citizentech-ai-gs-2026
+video:
+https://youtu.be/PUiZ5R7qSuU
