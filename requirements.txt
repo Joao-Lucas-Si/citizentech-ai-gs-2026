@@ -10,5 +10,3 @@ gradio==6.31.0
 google-genai==3.3.0
 langchain-google-genai==4.5.0
 langchain-ollama==1.1.0
-langchain-openrouter==0.3.0
-langchain-huggingface==1.2.3

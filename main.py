@@ -27,7 +27,7 @@ if __name__ == "__main__":
     # print(tool_todos_transportes())
     demo = criar_gradio()
     
-    demo.launch(share=True)
+    demo.launch()
 
 # def main():
 #     console = Console(theme=Theme({

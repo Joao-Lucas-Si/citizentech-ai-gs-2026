@@ -6,21 +6,23 @@
 - Gabriel de Paula Santos (RM573195) 
 - Joao Lucas Silva Lopes (RM573875)
 - Enzo Ribeiro (RM569429)
-  
 ---
-
-imagem de comprovação do projeto rodando:
-
-![imagem](print.png)
 
 # Domínio
 
-O domínio escolhido pelo grupo foi **Agente de Inteligência Artificial aplicado à assistência de escrita**.
+O domínio escolhido pelo grupo foi **mobilidade pública**.
 
-A proposta do projeto é desenvolver um agente profissional capaz de auxiliar o usuário em diferentes etapas da produção e desenvolvimento de textos.
+A proposta do projeto é desenvolver um agente auxiliar que ajudaria o usuário em relação a transporte público, a ia consegue ver todas as linhas do sistema, visualizar seus dados como itinerario, atrasos e horario, ela pode calcular o tempo de uma viagem considerando seu atraso, pode ver os dados do usuário para personalizar uma resposta e tem controle sobre sua própria mémoria.
 
-O agente terá consigo várias tools que permitiram se adaptar para atender da melhor forma o usuário, indo desde escrever arquivos de textos a uma busca inteligente pelas mensagens anteriores do sistema.
+# llm
 
+devido a problemas com o serviço do ollama cloud, tivemos que trocar a llm do agente para gemini através de api do google e usar ollama localmente para tarefas como embeddis e para o juiz do ragas, sendo assim, é preciso ter uma chave no google ai studio e ollama instalado.
+
+devido a esses mesmos motivos, o projeto foi desenvolvido localmente, sem colab ou jupyter notebook, siga as instruções no arquivo readme para descobrir como rodar.
+
+## juiz
+
+como dito assim, o juz do sistema é feito através do ollama local, explicando melhor a escolha, principalmente sobre a preferencia acima do gemini api, boa parte dos modelos hospedados pelo google não permitem multiplos candidatos de resposta, algo obrigatorio para que a bibilioteca ragas funcione, sendo assim, um modelo local foi necessário
 
 ## ferramentas/tools
 
@@ -48,20 +50,20 @@ essa tool retorna todas as linhas dentro do sistema.
 
 essa tool serve para selecionar os dados do usuário atual salvas no sistema, permitindo a ia personalizar a resposta a partir das informações presentes.
 
-# ChatOllama
+# Gemini
 
-O modelo utilizado é:
+como digo anteriormente, utilizamos o gemini devido a problemas com ollama cloud, o modelo atualmente utilizado é:
 
 ```text
-gemma4:cloud
+gemini-3.1-flash-lite
 ```
 
-O modelo é utilizado através do **Ollama Cloud**.
+O modelo é utilizado através do **Google ai studio**.
 
 A chave de acesso é configurada através do arquivo `.env`:
 
 ```env
-OLLAMA_API_KEY=<sua-chave>
+GEMINI=<chave>
 ```
 
 # Interface
@@ -73,22 +75,22 @@ e a terceira é a leitor de documentos, que permite o usuário ver os documentos
 
 # Principais arquivos
 
-| Arquivo | Responsabilidade |
-|----------|------------------|
-| `main.py` | Inicialização do chatbot |
-| `src/agent` | criação do agent do projeto |
-| `src/chain.py` | pipeline da ia antiga, usado como auxiliar |
-| `src/interface` | configuração da interface gradio |
-| `src/rag` | configuração do rags |
-| `src/tools` | configuração das tools |
-| `assets/prompt/` | Prompts utilizados pelo chatbot |
+| Arquivo           | Responsabilidade                                     |
+| ----------------- | ---------------------------------------------------- |
+| `main.py`         | Inicialização do sistema                             |
+| `src/agent`       | pasta com todos os arquivos necessários para o agent |
+| `src/interface`   | configuração da interface gradio                     |
+| `src/agent/rag`   | configuração do rags                                 |
+| `src/agent/tools` | configuração das tools                               |
+| `assets/prompt/`  | Prompts utilizados pelo chatbot                      |
+| `src/db.py`       | Código para o banco de dados                         |
 
 # Como executar
 
 ## 1. Criar o ambiente virtual
 
 ```bash
-python -m venv .venv
+python -m venv venv
 ```
 
 ## 2. Ativar o ambiente virtual
@@ -102,7 +104,7 @@ python -m venv .venv
 ### Linux/macOS
 
 ```bash
-source .venv/bin/activate
+source venv/bin/activate
 ```
 
 ## 3. Instalar as dependências
@@ -111,12 +113,13 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## 4. Configurar o Ollama Cloud
+## 4. Configurar a api do gemini
 
-Crie um arquivo `.env` baseado no `.env.example`:
+Crie um arquivo `.env` baseado no `.env.example`, coloque sua chave do google ai studio e informe qual modelo local deseja usar como juiz:
 
 ```env
-OLLAMA_API_KEY=<sua-chave>
+GEMINI=<sua-chave>
+JUIZ=<modelo ollama local>
 ```
 
 ## 5. Configurar o ollama local
@@ -131,6 +134,8 @@ ollama serve
 
 ollama pull nomic-embed-text
 ```
+
+também instale o modelo de geração de texto que você escolheu como juiz
 
 ## 5. Executar
 
@@ -150,13 +155,5 @@ com o projeto rodado, abra a url que aparecerá no terminal
 
 # Limitações atuais
 
-- O funcionamento depende da configuração do Ollama Cloud;
-- O Rags só consegue acompanhar as modificações feitas pelo agent, quando o usuário modifica um arquivo manualmente ele fica fora do rastreio;
-- o visualizar de arquivos esta limitado a arquivos já disponivel quando o projeto é executado, não conseguindo rastrear arquivos criados pelo agent, isso devido a uma limitação interna do gradio, mas ainda é possivel ver as modificações aplicadas arquivos já existentes
-- o funcionamento interno do gradio pode ser defeituoso quando algum arquivo dos documentos é deletado, mesmo reininciando o projeto
+- os atrasos do sistema são estaticos, não mudam com o tempo e são considerados como sempre ativos, não tendo funcionamento condicional que um sistema de verdade teria.
 
-# Teste e Avaliação
-
-para testar e avaliar o agent, preparamos um arquivo separado chamado iteracoes.md, nele contém três perguntas feitas em iterações de testes, o objetivo da pergunta, e a resposta dada.
-
-além disso, para avaliar o comportamento interno do agent, cada mensagem criada por ele, tem seus pensamentos registrados no arquivo data/logs/logs.txt, assim é possivel saber cada ferramenta usada e como o agente utilizou elas
