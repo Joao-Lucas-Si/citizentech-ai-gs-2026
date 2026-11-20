@@ -16,13 +16,87 @@ A proposta do projeto é desenvolver um agente auxiliar que ajudaria o usuário 
 
 # llm
 
-devido a problemas com o serviço do ollama cloud, tivemos que trocar a llm do agente para gemini através de api do google e usar ollama localmente para tarefas como embeddis e para o juiz do ragas, sendo assim, é preciso ter uma chave no google ai studio e ollama instalado.
+devido a problemas com o serviço do ollama cloud, tivemos que trocar a llm do agente para gemini através da api do google e usar ollama localmente para tarefas como embeddings, sendo assim, é preciso ter uma chave no google ai studio e ollama instalado.
 
-devido a esses mesmos motivos, o projeto foi desenvolvido localmente, sem colab ou jupyter notebook, siga as instruções no arquivo readme para descobrir como rodar.
+devido a esses mesmos motivos, o projeto foi desenvolvido localmente, sem colab ou jupyter notebook, siga as instruções localizadas no fim desse arquivo readme para descobrir como rodar.
 
-## juiz
+# documentação
 
-como dito assim, o juz do sistema é feito através do ollama local, explicando melhor a escolha, principalmente sobre a preferencia acima do gemini api, boa parte dos modelos hospedados pelo google não permitem multiplos candidatos de resposta, algo obrigatorio para que a bibilioteca ragas funcione, sendo assim, um modelo local foi necessário
+nos tópicos a seguir era tratado sobre a estrutura do programa e decisões de desenvolvimento, que podem ser lidas tanto aqui quanto no arquivo documentacao.pdf
+
+## Fluxo
+
+![fluxo](fluxo.png)
+
+### Documentos
+A primeira etapa do fluxo do agente é ler e carregar os documentos técnicos, fazendo isso de forma 
+generalista para todos os documento dentro da pasta base_documental
+### Chunk 
+Com os documentos coletados, o conteúdo atraído é passado para o splitter, nesse caso, 
+MarkdownHeaderTextSplitter, formando um array de chunks, além disso, durante esse processo, os 
+títulos de cada seção são lidos pelo sistema, extraindo o nome da linha em que a seção se trata e 
+salvando ela como metadado do chunk. 
+### Guardrail documental
+Antes dos chunks serem passados para o chromadb e serem persistidos no sistema, eles passam por 
+uma filtragem que remove aqueles que contém tentativas de prompt injection.
+### Índice 
+Com os chunks filtrados, eles são persistidos dentro do chromadb, permitindo mudar diretamente 
+para seção retriever da próxima vez que o agente for executado, sem precisar da indexação e de seus 
+passos anteriores
+### Retriever 
+Com o chromadb carregado, o retriever é criado seguindo o algoritmo de similaridade com a 
+limitação de retornar apenas 3 resultados de uma vez.
+### Guardrail de prompt
+Antes de começar a carregar as dependências para o agente, o sistema primeiramente verifica se o 
+prompt informado do usuário contém alguma tentativa de ataque, caso haja, a resposta final é 
+enviada apenas informado que a aquela pergunta foi recusada pelo sistema, se não houver, o 
+processo continua
+### Template Prompt
+Com a segurança garantida, o sistema carrega o prompt react do Langchain hub e o prompt do 
+sistema salvo em arquivo, juntando os dois em um único prompttemplate
+### Agent 
+Com o prompt final carregado, o sistema inicia o cliente de llm usando a api do gemini, usando 
+especificamente o modelo gemini-3.1-flash-lite, e instância o agente passado o template prompt, a 
+llm e todas as tools.
+### Resposta
+Por fim, o agente entra em execução, em modo stream, onde partes do processo de geração de 
+respostas são capturados um por vez no lugar de receber a resposta final diretamente, assim, cada 
+parte é capturada e salva no arquivos de logs, quando a resposta final é gerada, a interface gradio é 
+notificada e adiciona a nova mensagem
+
+## Dependências e versões
+
+| Dependência            | versão |
+| ---------------------- | ------ |
+| pydantic               | 2.14.3 |
+| python-dotenv          | 1.2.4  |
+| langchain              | 1.5.0  |
+| langchain_classic      | 1.0.8  |
+| langchain-community    | 0.4.1  |
+| chromadb               | 1.5.9  |
+| ragas                  | 0.4.3  |
+| pandas                 | 3.1.3  |
+| gradio                 | 6.31.0 |
+| google-genai           | 3.3.0  |
+| langchain-google-genai | 4.5.0  |
+| langchain-ollama       | 1.1.0  |
+
+## Decisões técnicas
+### Chunking
+*Método escolhido*: MarkdownHeaderTextSplitter
+Optamos por usar MarkdownHeaderTextSplitter como splitter principal para esse projeto, isso 
+devido ao formato estrutural dos documentos técnicos, o MarkdownHeaderTextSplitter divide o 
+documento em chunks através de cada Header (titulo markdown marcado com #) represente no 
+documento, e como cada linha segue o formato descrito em “Documentos”, o splitter consegue 
+optar de forma integral as informações de cada linha sem juntar com outras ou perder informações
+#### Comparativo
+Em comparação as outros splitters, como RecursiveCharacterTextSplitter, há um custo maior em 
+tokens com MarkdownHeaderTextSplitter, mas uma lógica mais consistente, cada chunk retornado 
+tem dados de apenas uma única linha, sem misturar com outras, além de todas as informações 
+estarem de forma integral, o RecursiveCharacterTextSplitter acabaria por cortar informações sobre 
+uma linha e ter chunks com informações de várias linhas misturadas, já que seu critério é o tamanho 
+de cada seção, então optamos por escolher um custo maior em prioridade para respostas mais 
+precisas, invés de um custo menor para respostas fragmentadas.
 
 ## ferramentas/tools
 
@@ -115,16 +189,15 @@ pip install -r requirements.txt
 
 ## 4. Configurar a api do gemini
 
-Crie um arquivo `.env` baseado no `.env.example`, coloque sua chave do google ai studio e informe qual modelo local deseja usar como juiz:
+Crie um arquivo `.env` baseado no `.env.example`, coloque sua chave do google ai studio:
 
 ```env
 GEMINI=<sua-chave>
-JUIZ=<modelo ollama local>
 ```
 
 ## 5. Configurar o ollama local
 
-devido algums problemas com o ollama cloud para embeds, é preciso tanto ter ele em sua maquina quanto ter a chave do ollama cloud, siga as instruções do [site oficial](https://ollama.com/download) para abaixar o ollama 
+devido aos problemas relacionados ao embeddings, é preciso tanto ter ele em sua maquina quanto ter a chave do ollama cloud, siga as instruções do [site oficial](https://ollama.com/download) para abaixar o ollama 
 
 após ter o ollama em sua maquina, inicie o servidor e rode com o modelo de embeddings, cada comando em um terminal distinto
 
@@ -134,8 +207,6 @@ ollama serve
 
 ollama pull nomic-embed-text
 ```
-
-também instale o modelo de geração de texto que você escolheu como juiz
 
 ## 5. Executar
 
@@ -152,6 +223,8 @@ gradio main.py
 ```
 
 com o projeto rodado, abra a url que aparecerá no terminal
+
+## 6. Executando ragas
 
 # Limitações atuais
 
